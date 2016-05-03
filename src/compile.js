@@ -8,7 +8,13 @@ function wrapValue(value) {
 }
 
 function unwrapValue(value) {
-  return value.replace('.test{content:', '').replace('}', '');
+
+  var testIndex = '.test{content:',
+      subStrValue = value.substr(value.indexOf(testIndex) + testIndex.length);
+
+  subStrValue = subStrValue.replace('}', '');
+
+  return subStrValue;
 }
 
 var Compile = {

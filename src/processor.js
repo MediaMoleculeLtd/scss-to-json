@@ -108,7 +108,7 @@ function Processor(path, options) {
 
   if (hasPrecursors(options)) {
     options.precursors.forEach(function(precursor) {
-      precursors += loadPrecursorAsString(precursor);
+      precursors += loadPrecursorAsString(precursor.path);
     });
   }
 
