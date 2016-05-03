@@ -73,12 +73,16 @@ function hasDependencies(options) {
   return options && options.dependencies && options.dependencies.length > 0;
 }
 
+function hasPrecursors(options) {
+  return options && options.precursors && options.precursors.length > 0;
+}
+
 function normalizeLines(line) {
   var stripped = utilities.stripNewLinesAndSemicolons(line);
   return stripped.trim();
 }
 
-function declarationsFromString(path, declarationStore, options) {
+function declarationsFromString(path, declarationStore, options, precursors) {
   var data = fs.readFileSync(path, 'utf8');
 
   if (hasScope(options)) {
@@ -87,17 +91,30 @@ function declarationsFromString(path, declarationStore, options) {
 
   var lines = String(data).split(LINE_DELIMITER).map(normalizeLines).filter(filterLines);
   return lines.map(function(line) {
-    return new Declaration(line, declarationStore);
+    return new Declaration(line, declarationStore, precursors);
   });
+}
+
+function loadPrecursorAsString(path) {
+  var data = fs.readFileSync(path, 'utf8');
+
+  return data;
 }
 
 function Processor(path, options) {
   var declarations;
+  var precursors = '';
   var declarationStore = new DeclarationStore();
+
+  if (hasPrecursors(options)) {
+    options.precursors.forEach(function(precursor) {
+      precursors += loadPrecursorAsString(precursor);
+    });
+  }
 
   if (hasDependencies(options)) {
     options.dependencies.forEach(function(dependency) {
-      declarationsFromString(dependency.path, declarationStore, dependency);
+      declarationsFromString(dependency.path, declarationStore, dependency, precursors);
     });
   }
 

@@ -12,8 +12,8 @@ function unwrapValue(value) {
 }
 
 var Compile = {
-  fromString: function(value) {
-    var wrappedValue = wrapValue(value);
+  fromString: function(value, precursor) {
+    var wrappedValue = precursor + '\r\n\r\n' + wrapValue(value);
     var s = sass.renderSync({ data: wrappedValue });
     var compiled = String(s.css);
     var minifiedCompiled = cssmin(compiled);

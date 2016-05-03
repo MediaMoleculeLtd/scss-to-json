@@ -10,12 +10,12 @@ function hasGlobalFlag(value) {
   return !!value.match(regex);
 }
 
-function Declaration(line, declarationStore) {
-  this._parse(line, declarationStore);
+function Declaration(line, declarationStore, precursor) {
+  this._parse(line, declarationStore, precursor);
 }
 
 Declaration.prototype = {
-  _parse: function(line, declarationStore) {
+  _parse: function(line, declarationStore, precursor) {
     var assignmentIndex = line.indexOf(ASSIGNMENT_OPERATOR);
     var assignedVariable = line.substring(0, assignmentIndex).trim();
     var assignedValue = line.substring(assignmentIndex + 1, line.length).trim();
@@ -23,7 +23,7 @@ Declaration.prototype = {
     var replacedValue = declarationStore.replaceVariables(assignedValue);
 
     this.variable = new Variable(assignedVariable);
-    this.value = new Value(replacedValue);
+    this.value = new Value(replacedValue, precursor);
     this.global = hasGlobalFlag(replacedValue);
 
     declarationStore.addDeclaration(this);
